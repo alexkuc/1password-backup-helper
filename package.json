@@ -2,7 +2,15 @@
   "name": "1password-backup-helper",
   "version": "0.0.1",
   "main": "index.js",
+  "type": "commonjs",
   "repository": "git@github.com:alexkuc/1password-backup-helper.git",
   "author": "Alexander Kucheryuk <alexander.kucheryuk@icloud.com> (https://github.com/alexkuc)",
-  "license": "MIT"
+  "license": "MIT",
+  "scripts": {
+    "backup": "node ./index.js"
+  },
+  "dependencies": {
+    "filenamify": "^4.2.0",
+    "minimist": "^1.2.5"
+  }
 }
