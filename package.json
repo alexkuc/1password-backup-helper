@@ -1,0 +1,8 @@
+{
+  "name": "1password-backup-helper",
+  "version": "0.0.1",
+  "main": "index.js",
+  "repository": "git@github.com:alexkuc/1password-backup-helper.git",
+  "author": "Alexander Kucheryuk <alexander.kucheryuk@icloud.com> (https://github.com/alexkuc)",
+  "license": "MIT"
+}
