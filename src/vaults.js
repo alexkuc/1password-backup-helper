@@ -1,6 +1,6 @@
 'use strict';
 
-const Vault = require('./vault');
+const Vault = require('./data-classes/vault');
 
 class Vaults {
   /**

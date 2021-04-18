@@ -4,12 +4,12 @@ const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
-const Overview = require('./src/overview');
-const Details = require('./src/details');
-const Item = require('./src/item');
-const Vault = require('./src/vault');
+const Overview = require('./src/data-classes/overview');
+const Details = require('./src/data-classes/details');
+const Item = require('./src/data-classes/item');
+const Vault = require('./src/data-classes/vault');
 const Vaults = require('./src/vaults');
-const DocumentAttributes = require('./src/document-attributes');
+const DocumentAttributes = require('./src/data-classes/document-attributes');
 
 const filenamify = require('filenamify');
 
