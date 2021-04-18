@@ -80,14 +80,18 @@ for (let i = 0; i < items.length; i++) {
     fs.mkdirSync(`${backupPath}/${vaultName}/`);
   }
 
-  const filename = filenamify(item.overview.title, { replacement: ' ' });
+  const _filename = filenamify(item.overview.title, { replacement: ' ' });
 
-  console.log(
-    `${vaultName}/${filename}.json... ` + (i + 1) + '/' + items.length
-  );
+  const fileExt = '.json';
+
+  const fileBase = path.basename(_filename, fileExt);
+
+  const filename = fileBase + '-' + item.uuid + fileExt;
+
+  console.log(`${vaultName}/${filename}... ` + (i + 1) + '/' + items.length);
 
   fs.writeFileSync(
-    `${backupPath}/${vaultName}/${filename}.json`,
+    `${backupPath}/${vaultName}/${filename}`,
     JSON.stringify(item)
   );
 }
