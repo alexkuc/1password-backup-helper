@@ -2,12 +2,14 @@
 
 const { execSync } = require('child_process');
 const fs = require('fs');
+const path = require('path');
 
 const Overview = require('./src/overview');
 const Details = require('./src/details');
 const Item = require('./src/item');
 const Vault = require('./src/vault');
 const Vaults = require('./src/vaults');
+const DocumentAttributes = require('./src/document-attributes');
 
 const filenamify = require('filenamify');
 
@@ -94,4 +96,66 @@ for (let i = 0; i < items.length; i++) {
     `${backupPath}/${vaultName}/${filename}`,
     JSON.stringify(item)
   );
+}
+
+/**
+ * @type Item[]
+ */
+const docs = JSON.parse(
+  execSync(`op list documents --session ${token}`).toString(),
+  (k, v) => {
+    if (!isNaN(parseInt(k))) {
+      return new Item(v);
+    }
+    if (k === 'overview') {
+      return new Overview(v);
+    }
+    return v;
+  }
+);
+
+for (let i = 0; i < docs.length; i++) {
+  const uuid = docs[i].uuid;
+
+  /**
+   * @type Item
+   */
+  const doc = JSON.parse(
+    execSync(`op get item ${uuid} --session ${token}`).toString(),
+    (k, v) => {
+      if (k === 'overview') {
+        return new Overview(v);
+      }
+      if (k === 'details') {
+        return new Details(v);
+      }
+      if (k === '') {
+        return new Item(v);
+      }
+      if (k === 'documentAttributes') {
+        return new DocumentAttributes(v);
+      }
+      return v;
+    }
+  );
+
+  const vaultName = vaults.findByUUID(doc.vaultUuid);
+
+  if (!fs.existsSync(`${backupPath}/${vaultName}/`)) {
+    fs.mkdirSync(`${backupPath}/${vaultName}/`);
+  }
+
+  const _filename = doc.details.documentAttributes.fileName;
+
+  const fileExt = path.extname(_filename);
+
+  const fileBase = path.basename(_filename, fileExt);
+
+  const filename = fileBase + '-' + doc.uuid + fileExt;
+
+  console.log(`${vaultName}/${filename}... ` + (i + 1) + '/' + docs.length);
+
+  const binaryData = execSync(`op get document ${doc.uuid}`);
+
+  fs.writeFileSync(`${backupPath}/${vaultName}/${filename}`, binaryData);
 }
