@@ -88,7 +88,16 @@ for (let i = 0; i < items.length; i++) {
 
   const fileBase = path.basename(_filename, fileExt);
 
-  const filename = fileBase + '-' + item.uuid + fileExt;
+  // safe-guard against overwritting duplicate entries
+
+  let filename = fileBase + fileExt;
+
+  let postfix = 0;
+
+  while (fs.existsSync(`${backupPath}/${vaultName}/${filename}`)) {
+    postfix++;
+    filename = fileBase + '-' + postfix + fileExt;
+  }
 
   console.log(`${vaultName}/${filename}... ` + (i + 1) + '/' + items.length);
 
