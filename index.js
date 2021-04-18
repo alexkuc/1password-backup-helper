@@ -155,7 +155,7 @@ for (let i = 0; i < docs.length; i++) {
 
   console.log(`${vaultName}/${filename}... ` + (i + 1) + '/' + docs.length);
 
-  const binaryData = execSync(`op get document ${doc.uuid}`);
+  const binaryData = execSync(`op get document ${doc.uuid} --session ${token}`);
 
   fs.writeFileSync(`${backupPath}/${vaultName}/${filename}`, binaryData);
 }
