@@ -16,6 +16,7 @@ const filenamify = require('filenamify');
 const argv = require('minimist')(require('process').argv.slice(2));
 const token = argv.token;
 const backupPath = argv.path;
+const uuidForName = argv.uuid;
 
 if (!token) {
   throw `Missing --token parameter!\nTo create one run: op signin my --raw`;
@@ -82,21 +83,28 @@ for (let i = 0; i < items.length; i++) {
     fs.mkdirSync(`${backupPath}/${vaultName}/`);
   }
 
-  const _filename = filenamify(item.overview.title, { replacement: ' ' });
+  let filename = '';
 
-  const fileExt = '.json';
+  if (uuidForName) {
+    filename = item.uuid + '.json';
+  }
 
-  const fileBase = path.basename(_filename, fileExt);
+  if (!uuidForName) {
+    // safe-guard against overwritting duplicate entries
+    const _filename = filenamify(item.overview.title, { replacement: ' ' });
 
-  // safe-guard against overwritting duplicate entries
+    const fileExt = '.json';
 
-  let filename = fileBase + fileExt;
+    const fileBase = path.basename(_filename, fileExt);
 
-  let postfix = 0;
+    filename = fileBase + fileExt;
 
-  while (fs.existsSync(`${backupPath}/${vaultName}/${filename}`)) {
-    postfix++;
-    filename = fileBase + '-' + postfix + fileExt;
+    let postfix = 0;
+
+    while (fs.existsSync(`${backupPath}/${vaultName}/${filename}`)) {
+      postfix++;
+      filename = fileBase + '-' + postfix + fileExt;
+    }
   }
 
   console.log(`${vaultName}/${filename}... ` + (i + 1) + '/' + items.length);
@@ -154,13 +162,28 @@ for (let i = 0; i < docs.length; i++) {
     fs.mkdirSync(`${backupPath}/${vaultName}/`);
   }
 
+  let filename = '';
+
   const _filename = doc.details.documentAttributes.fileName;
 
   const fileExt = path.extname(_filename);
 
   const fileBase = path.basename(_filename, fileExt);
 
-  const filename = fileBase + '-' + doc.uuid + fileExt;
+  if (uuidForName) {
+    filename = doc.uuid + fileExt;
+  }
+
+  if (!uuidForName) {
+    // safe-guard against duplicate names
+    // prevent overwriting by appending a counter
+    let postfix = 0;
+    filename = fileBase + fileExt;
+    while (fs.existsSync(`${backupPath}/${vaultName}/${filename}`)) {
+      postfix++;
+      filename = fileBase + '-' + postfix + fileExt;
+    }
+  }
 
   console.log(`${vaultName}/${filename}... ` + (i + 1) + '/' + docs.length);
 
