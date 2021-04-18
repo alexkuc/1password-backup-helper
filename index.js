@@ -103,7 +103,7 @@ for (let i = 0; i < items.length; i++) {
 
   fs.writeFileSync(
     `${backupPath}/${vaultName}/${filename}`,
-    JSON.stringify(item)
+    JSON.stringify(item, null, 2)
   );
 }
 
